@@ -46,10 +46,27 @@ def checkHeTu(hetu):
     # Lasketaan HeTu-parametrin pituus
     length = len(hetu)
 
+    # Jos pituus on oikea tehdään eri osat
+    if length== 11:
+        dayPart = hetu[0:2]
+        monthPart = hetu[2:4]
+        yearPart = hetu[4:6]
+        centuryPart = hetu[6:7]
+        numberPart = hetu[7:10]
+        checkSum = hetu[10]
+
     if length < 11:
         result = (1, 'Henkilötunnus liian lyhyt')
 
     if length > 11:
         result = (2, 'Henkilötunnus liian pitkä')
 
+    # Tarkistetaan päiväosan oikeellisuus
     return result
+
+if __name__ =="__main__":
+    hetu = '130728-478N'
+    paivat = hetu[0:2]
+    kuukaudet = hetu[2:4]
+    print(paivat)
+    print(kuukaudet)
