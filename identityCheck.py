@@ -55,13 +55,25 @@ def checkHeTu(hetu):
         numberPart = hetu[7:10]
         checkSum = hetu[10]
 
+    # Tarkistetaan päiväosan oikeellisuus, pitää olla pelkkiä numeroita
+        if dayPart.isdigit():
+            day = int (dayPart)
+            # Päivän pitää olla väliltä 1 - 31
+            if day < 1:
+                result = (3, 'Päivä virheellinen')
+            if day > 31:
+                result = (3, 'Päivä virheellinen')
+        else:
+            # Jos muuta kuin pelkkiä numeroita
+            result = (3, 'Päivä virheellinen')
+
     if length < 11:
         result = (1, 'Henkilötunnus liian lyhyt')
 
     if length > 11:
         result = (2, 'Henkilötunnus liian pitkä')
 
-    # Tarkistetaan päiväosan oikeellisuus
+    
     return result
 
 if __name__ =="__main__":
