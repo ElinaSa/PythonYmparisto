@@ -54,6 +54,16 @@ def checkHeTu(hetu):
 
     # Sanakirja, jossa on jakojäännösten kirjaintunnukset
     modulusSymbols = {
+        0: '0',
+        1: '1',
+        2: '2',
+        3: '3',
+        4: '4',
+        5: '5',
+        6: '6',
+        7: '7',
+        8: '8',
+        9: '9',
         10: 'A',
         11: 'B',
         12: 'C',
@@ -125,25 +135,32 @@ def checkHeTu(hetu):
         else:
            result = (5,'Vuosi virheellinen') 
 
-    # TODO: Tähän Try - Except, jolla tarkistetaan vuosisatakoodi
+        # Tarkistetaan vuosisataosan oikeellisuus, pitää olla +, - tai A
+        try: 
+            position = list(validCenturyCodes).index(centuryPart)
+        except:
+            result = (6, 'Vuosisatakoodi virheellinen')
 
-    # TODO: Tähän modulo 31 tarkistus
-    ''' # Tarkistetaan vuosisataosan oikeellisuus, pitää olla +, - tai A
-        if centuryPart != '+':
-            result = (6, 'Vuosisatakoodi virheellinen')
-        if centuryPart != '-':
-            result = (6, 'Vuosisatakoodi virheellinen')
-        if centuryPart != 'A':
-            result = (6, 'Vuosisatakoodi virheellinen')
-         '''
+        # TODO: Tähän modulo 31 tarkistus
+           
+        partsCombined = dayPart + monthPart + yearPart + numberPart
+
+        if partsCombined.isdigit() and result == (0, 'OK'):
+            checkSumCalculated = int(partsCombined)%31
+            if checkSum != modulusSymbols[checkSumCalculated]:
+                result = (7, 'Varmistussumma ei täsmää')
+        
     if length < 11:
         result = (1, 'Henkilötunnus liian lyhyt')
 
     if length > 11:
         result = (2, 'Henkilötunnus liian pitkä')
-
     
     return result
+
+# TODO: Poista loput rivit, kun valmista!
+# KOKEILLAAN ERILAISIA VAIHTOEHTOJA
+# ---------------------------------
 
 if __name__ =="__main__":
     hetu = '130728-478N'
@@ -174,11 +191,25 @@ if __name__ =="__main__":
     #print('Vuosisatakoodi * on ', centuryCodes['*'])
 
     # Haetaan indeksinumero listan jäsenelle
+
     try: 
         position = validCenturyCodes.index('*') 
-        print(position)
-    except:
+    except Exception as e:
+        print('Tapahtui virhe:', e)
+
+    print('Ja tämä tulee virheenkäsittelyn jälkeen näkyviin') 
+
+    searchLetter = '+'
+
+    for value in validCenturyCodes:
+        if value == searchLetter:
+            found = True
+            break
+        else:
+            found = False
+    if found == False:
         print('Ei löytynyt')
+    
 
 
 
