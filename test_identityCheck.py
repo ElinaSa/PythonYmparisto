@@ -1,4 +1,5 @@
 # YKSIKKÖTESTIT MODUULILLE identityCheck.py
+# TDD-filosofia, eli ensin luotu testit ja sitten vasta kirjoitettu koodit
 
 import identityCheck
 
