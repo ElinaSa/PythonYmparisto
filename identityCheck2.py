@@ -29,8 +29,8 @@ class NationalSSN:
         self.dateOfBirth = ''
         self.number = 0
         self.gender = ''
-        self.checkSum = ''
-
+        """ self.checkSum = '' # tietoa ei tarvitse tallentaa mihinkään, mutta jätän näkyville
+ """
         # Sanakirjat vuosisatakoodeille ja varmisteille
         self.centuryCodes = {
             '+': '1800',
@@ -180,21 +180,42 @@ class NationalSSN:
             # Palautetaan ikä vuosina
             return ageInYears
 
+    # TODO: Metodi sukupuolen selvittämiseen sekä number- ja gender-ominaisuuden asettamiseen
+    def getGender(self):
+   
+        # Tarkistetaan ensin, onko SSN oikein syötetty
+        if self.isValidSsn():
+
+            # Otetaan merkkijonosta järjestysnumero hyödyntämällä splitSSN-metodia
+            parts = self.splitSsn()
+
+            # Muutetaan luvuksi ja tallennetaan se ominaisuuden arvoksi
+            number = int(parts['number'])
+            self.number = number
+
+            # Selvitetään onko parillinen (tyttö) vai pariton (poika) -> näppärintä kakkosen jakojäännöksellä
+            if number % 2 == 0:
+                self.gender = 'Nainen'
+            else:
+                self.gender = 'Mies'
+
 # MAIN KOKEILUJA VARTEN (Poista, kun ei enää tarvita)
 # ==================================================
 
-
 if __name__ == "__main__":
     try:
-        hetu1 = NationalSSN('130728x478N')
+        hetu1 = NationalSSN('130728-478N')
         hetu1.checkSsnLengthOk()
-        hetu1.calculateAge()
+        ika = hetu1.calculateAge()
+        hetu1.getGender()
+
     except Exception as e:
         print('Tapahtui virhe:', e)
        
-    """ hetu1.getDateOfBirth()
-    print('Oikein muodostettu', hetu1.checkSsnLengthOk())
-    print('HeTun osat ovat: ', hetu1.splitSsn())
-    print('Syntymäaikaosa ISO-muodossa on ', hetu1.dateOfBirth)
+   
+    print('Henkilötunnuksen pituus on oikein', hetu1.checkSsnLengthOk())
     print('Henkilötunnus on oikein muodostettu', hetu1.isValidSsn())
-    print('Henkilön ikä on', ika) """
+    print('HeTun osat ovat: ', hetu1.splitSsn())
+    print('Syntymäaikaosa ISO-muodossa on', hetu1.dateOfBirth)
+    print('Henkilön ikä on', ika)
+    print('Ja hän on', hetu1.gender)
