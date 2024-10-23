@@ -11,29 +11,31 @@ import datetime
 # ------
 
 # Henkilötunnuksen käsittely
+
+
 class NationalSSN:
     """Various methods to access and validate Finnish Social Security Number properties
     """
+
     def __init__(self, ssn: str) -> None:
-        
         """Generates a Finnish SSn object
 
         Args:
             ssn (str): 11 character SSN to process
-        """        
+        """
         self.ssn = ssn
 
         # Laskemalla selviävät ominaisuudet
-        self.dateOfBirth = '' 
+        self.dateOfBirth = ''
         self.number = 0
         self.gender = ''
         self.checkSum = ''
 
         # Sanakirjat vuosisatakoodeille ja varmisteille
         self.centuryCodes = {
-            '+' : '1800',
-            '-' : '1900',
-            'A' : '2000'
+            '+': '1800',
+            '-': '1900',
+            'A': '2000'
         }
 
         self.moduloSymbols = {
@@ -69,7 +71,7 @@ class NationalSSN:
             29: 'X',
             30: 'Y'
         }
-   
+
     # Luokan metodi eri osien laskentaan ja järkevyystarkistuksiin
 
     # Tarkistetaan, että HeTu:n pituus on 11 merkkiä
@@ -81,9 +83,14 @@ class NationalSSN:
         """
         ssnLength = len(self.ssn)
         if ssnLength != 11:
-            return False
-            # TODO: Mieti pitäisikö tässä generoida virheilmoitus (raise)            
-        else: 
+
+            # Generoidaan virhetilanne jos liian lyhyt tai liian pitkä
+            if ssnLength > 11:
+                raise ValueError('Henkilötunnuksessa ylimääräisiä merkkejä')
+            else:
+                raise ValueError('Henkilötunnuksesta puuttuu merkkejä')
+                       
+        else:
             return True
 
     # Pilkotaan henkilötunnus osiin
@@ -94,14 +101,14 @@ class NationalSSN:
             dict: parts as strings
         """
         # Tehdään pilkkominen vain jos pituus on oikein
-        if self.checkSsnLengthOk(): # Jos True, pilkotaan. Huom. self.metodinNimi
+        if self.checkSsnLengthOk():  # Jos True, pilkotaan. Huom. self.metodinNimi
             dayPart = self.ssn[0:2]
             monthPart = self.ssn[2:4]
             yearPart = self.ssn[4:6]
-            centuryPart = self.ssn[6:7] # Opettajalla vain 6, toimii niinkin
+            centuryPart = self.ssn[6:7]  # Opettajalla vain 6, toimii niinkin
             birthNumberPart = self.ssn[7:10]
             checksumPart = self.ssn[10]
-            return {'days': dayPart, 
+            return {'days': dayPart,
                     'months': monthPart,
                     'years': yearPart,
                     'century': centuryPart,
@@ -109,36 +116,22 @@ class NationalSSN:
                     'checksum': checksumPart
                     }
         else:
-           # TODO: Mieti, pitäisikö synnyttää virhetilanne raisella
-           return {'status' : 'error'}
+            return {'status': 'error'}
+
     
-    # Muutetaan syntymäaikaosa ja vuosisata päivämääräksi
-    def getDateOfBirth(self) -> None:
-        """Sets the value of dateOfBirth for():
-        """        
-        if self.checkSsnLengthOk():
-            isoDate = '1799-12-31'
-            parts = self.splitSsn()
-            centurySymbol = parts['century']
-            century = self.centuryCodes[centurySymbol]
-            isoDate = century[0:2] + parts['years'] + '-' + parts['months'] + '-' + parts['days']
-            self.dateOfBirth = isoDate
-    
-    # Lasketaan ikä nyt täysinä vuosina
-    def calculateAge(self):
-        pass
-    
+
     # Selvitetään varmistussumman avulla onko HeTu syötetty oikein
+
     def isValidSsn(self) -> bool:
         """Recalculates the checksum of the SSN and verifies it is the same in the given SSN
 
         Returns:
             bool: True if SSN is valid, False otherwise
         """
-
         if self.checkSsnLengthOk:
             parts = self.splitSsn()
-            moduloString = parts['days'] + parts['months'] + parts['years'] + parts['number']
+            moduloString = parts['days'] + parts['months'] + \
+                parts['years'] + parts['number']
             moduloNumeric = int(moduloString)
             checkSumCalculated = moduloNumeric % 31
             checkSumCalculatedSymbol = self.moduloSymbols[checkSumCalculated]
@@ -146,16 +139,62 @@ class NationalSSN:
                 return True
             else:
                 return False
-        else: 
+        else:
             return False
+
+# Muutetaan syntymäaikaosa ja vuosisata päivämääräksi
+    def getDateOfBirth(self) -> None:
+        """Sets the value of dateOfBirth property for object
+        """
+        
+        if self.isValidSsn():
+            isoDate = '1799-12-31'
+            parts = self.splitSsn()
+            centurySymbol = parts['century']
+
+            # TODO: Mitä jos symboli on väärä, sitähän ei huomioida järkevyystarkistuksessa -> kaatuu
+            try:
+                century = self.centuryCodes[centurySymbol]
+            except:
+                raise ValueError('Vuosisatamerkki virheellinen')
+            
+            isoDate = century[0:2] + parts['years'] + \
+                '-' + parts['months'] + '-' + parts['days']
+            self.dateOfBirth = isoDate
+
+    # Lasketaan ikä nyt täysinä vuosina
+    def calculateAge(self):
+        # Tarkistetaan ennen laskentaa, että henkilötunnus on oikein syötetty
+        if self.isValidSsn():  # Tarkistaa onko hetu syötetty oikein
+            self.getDateOfBirth()  # Kutsutaan metodia, joka asettaa dateOfBirht -ominaisuuden arvon
+
+            # Muutetaan olion syntymäaikaominaisuuteen tallennettu ISO-päivämäärä Python-päiväksi
+            pyhtonBirthDate = datetime.date.fromisoformat(self.dateOfBirth)
+
+            # Haetaan nykyinen päivämäärä (ja kellonaika myös tulee now:sta, mutta se ei meitä kiinnosta)
+            pythonToday = datetime.datetime.now()
+
+            # Lasketaan päivämäärien ero täysinä vuosina
+            ageInYears = pythonToday.year - pyhtonBirthDate.year
+
+            # Palautetaan ikä vuosina
+            return ageInYears
 
 # MAIN KOKEILUJA VARTEN (Poista, kun ei enää tarvita)
 # ==================================================
 
+
 if __name__ == "__main__":
-    hetu1 = NationalSSN('130728-478N')
-    hetu1.getDateOfBirth()
+    try:
+        hetu1 = NationalSSN('130728x478N')
+        hetu1.checkSsnLengthOk()
+        hetu1.calculateAge()
+    except Exception as e:
+        print('Tapahtui virhe:', e)
+       
+    """ hetu1.getDateOfBirth()
     print('Oikein muodostettu', hetu1.checkSsnLengthOk())
-    print('HeTun osat ovat: ', hetu1.splitSsn())    
+    print('HeTun osat ovat: ', hetu1.splitSsn())
     print('Syntymäaikaosa ISO-muodossa on ', hetu1.dateOfBirth)
     print('Henkilötunnus on oikein muodostettu', hetu1.isValidSsn())
+    print('Henkilön ikä on', ika) """
