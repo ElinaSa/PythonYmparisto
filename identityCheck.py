@@ -27,7 +27,7 @@ def opiskelijanumeroOk(opiskelijanumero: str) -> bool:
             result = True   
     return result 
 
-# TODO: Tee testit HeTu:a varten ja vasta sitten kirjoita koodi
+# Tee testit HeTu:a varten ja vasta sitten kirjoita koodi
 
 # Henkilötunnus esimerkki 130728-478N Testataan
 # 1. Pituus
