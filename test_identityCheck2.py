@@ -3,8 +3,8 @@
 import identityCheck2
 import pytest
 
-# Testeisssä käytettävät henkilötunnukset
-# ---------------------------------------
+# Testeisssä käytettävät henkilötunnukset (tehty objekteja testejä varten)
+# ------------------------------------------------------------------------
 
 testSsnOK = identityCheck2.NationalSSN('130728-478N')
 testSsnShort = identityCheck2.NationalSSN('130728-78N')
@@ -47,7 +47,7 @@ def test_gender():
     testSsnOK.getGender()
     assert testSsnOK.gender == 'Nainen'
 
-# Virhetilannetestit
+# Virhetilannetestit (generoitu virheilmoitukset) 
 # ------------------
 
 # Testitapaus 7: Liian lyhyen HeTu:n virheilmoitus, huom assert ei saa olla with:n sisällä

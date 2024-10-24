@@ -119,7 +119,6 @@ class NationalSSN:
             return {'status': 'error'}
 
     
-
     # Selvitetään varmistussumman avulla onko HeTu syötetty oikein
 
     def isValidSsn(self) -> bool:
@@ -180,7 +179,7 @@ class NationalSSN:
             # Palautetaan ikä vuosina
             return ageInYears
 
-    # TODO: Metodi sukupuolen selvittämiseen sekä number- ja gender-ominaisuuden asettamiseen
+    # Metodi sukupuolen selvittämiseen sekä number- ja gender-ominaisuuden asettamiseen
     def getGender(self):
    
         # Tarkistetaan ensin, onko SSN oikein syötetty
