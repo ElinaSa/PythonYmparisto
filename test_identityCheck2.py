@@ -28,7 +28,7 @@ def test_checkSsnLengthOK():
 def test_isValidSSN():
     assert testSsnOK.isValidSsn() == True
     
-# Testitapaus 3: Henkilötunnuksen syntymäaika väärin
+# Testitapaus 3: Henkilötunnuksen syntymäaika väärin 
 def test_birthdayWrong():
     assert testSsnWrongDay.isValidSsn() == False
     assert testSsnWrongMonth.isValidSsn() == False
